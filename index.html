@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEGO Minifigure 幸運人偶｜隨身的勇氣與創造力</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 背景環境粒子與光暈 -->
+  <div class="ambient-glow glow-top-left"></div>
+  <div class="ambient-glow glow-bottom-right"></div>
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- 頂部導覽列 -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand-logo">
+        <span class="brick-icon"></span>
+        <div class="brand-text">
+          <span class="brand-title">LUCKY MINIFIGURE</span>
+          <span class="brand-sub">樂高幸運守護人偶</span>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#showcase" class="nav-link active">幸運人偶</a>
+        <a href="#story" class="nav-link">由來與故事</a>
+        <a href="#symbolism" class="nav-link">象徵意涵</a>
+        <a href="#fortune" class="nav-link">幸運積木籤</a>
+        <a href="#prompt-section" class="nav-link highlight">Prompt 指令紀錄</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="soundToggleBtn" class="action-btn sound-btn" title="開啟/關閉積木音效">
+          <span class="sound-icon">🔊</span>
+          <span class="sound-text">音效 ON</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 主展示區 HERO SECTION -->
+    <section id="showcase" class="hero-section">
+      <div class="hero-container">
+        
+        <!-- 左側文案導引 -->
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>MY LUCKY CHARM ・ 專屬隨身幸運物</span>
+          </div>
+          <h1 class="hero-title">
+            跌碎了，<br>
+            <span class="text-gradient">重新拼起來就好。</span>
+          </h1>
+          <p class="hero-desc">
+            僅有 3.8 公分的身軀，卻承載著無窮的勇氣與想像。樂高人偶（LEGO Minifigure）不僅僅是一枚玩具，更是指引我面對未知與挫折的幸運符——只要雙手還在，隨時都能組裝出全新的自我。
+          </p>
+
+          <!-- 幸運能量條 -->
+          <div class="lucky-gauge-card">
+            <div class="gauge-header">
+              <span class="gauge-label">⚡ 幸運守護能量 (Lucky Level)</span>
+              <span id="luckyPercentage" class="gauge-value">88%</span>
+            </div>
+            <div class="gauge-bar-track">
+              <div id="luckyProgressBar" class="gauge-bar-fill" style="width: 88%;"></div>
+            </div>
+            <p class="gauge-hint">點擊右側人偶可注入幸運能量、觸發積木拼裝共鳴！</p>
+          </div>
+
+          <!-- 造型切換按鈕組 -->
+          <div class="outfit-selector">
+            <span class="selector-title">切換幸運角色形態：</span>
+            <div class="outfit-buttons">
+              <button class="outfit-btn active" data-skin="classic">
+                <span class="outfit-dot classic-dot"></span> 經典守護者
+              </button>
+              <button class="outfit-btn" data-skin="space">
+                <span class="outfit-dot space-dot"></span> 1980 太空探索
+              </button>
+              <button class="outfit-btn" data-skin="cyber">
+                <span class="outfit-dot cyber-dot"></span> 賽博造夢者
+              </button>
+              <button class="outfit-btn" data-skin="wizard">
+                <span class="outfit-dot wizard-dot"></span> 奇幻魔法師
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右側 3D 互動人偶展示台 -->
+        <div class="hero-stage-wrapper">
+          <div class="stage-pedestal" id="pedestalContainer">
+            <div class="pedestal-glow"></div>
+            
+            <!-- 懸浮微粒與光環 -->
+            <div class="lucky-halo"></div>
+            
+            <!-- 互動人偶主體 (高精緻 SVG) -->
+            <div class="minifigure-container" id="minifigureElement">
+              <!-- 人偶頭部提示氣泡 -->
+              <div class="speech-bubble" id="minifigureSpeech">
+                <span class="bubble-text">「保持微笑，幸運自會拼成！」</span>
+              </div>
+
+              <!-- SVG 樂高人偶 -->
+              <svg id="minifigureSvg" viewBox="0 0 300 420" class="minifigure-svg" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <!-- 經典塑膠光澤漸層 -->
+                  <linearGradient id="yellowGloss" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFF176"/>
+                    <stop offset="45%" stop-color="#FFD500"/>
+                    <stop offset="100%" stop-color="#F57F17"/>
+                  </linearGradient>
+                  
+                  <linearGradient id="torsoClassicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FF5252"/>
+                    <stop offset="50%" stop-color="#D32F2F"/>
+                    <stop offset="100%" stop-color="#8B0000"/>
+                  </linearGradient>
+
+                  <linearGradient id="legsClassicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#42A5F5"/>
+                    <stop offset="60%" stop-color="#1976D2"/>
+                    <stop offset="100%" stop-color="#0D47A1"/>
+                  </linearGradient>
+
+                  <linearGradient id="goldLuckyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFE082"/>
+                    <stop offset="50%" stop-color="#FFB300"/>
+                    <stop offset="100%" stop-color="#FF6F00"/>
+                  </linearGradient>
+
+                  <filter id="legoShadow" x="-20%" y="-20%" width="150%" height="150%">
+                    <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.45"/>
+                  </filter>
+                  <filter id="luckyGlowFilter" x="-40%" y="-40%" width="180%" height="180%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                    <feMerge>
+                      <feMergeNode in="blur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <!-- 人偶陰影投影 -->
+                <ellipse cx="150" cy="405" rx="75" ry="12" fill="rgba(0,0,0,0.5)" filter="blur(6px)"/>
+
+                <!-- 腿部 (Legs & Hips) -->
+                <g id="partLegs" class="minifigure-part legs-group">
+                  <!-- 骨盆腰帶 (Hip) -->
+                  <path d="M96 265 L204 265 L200 292 L100 292 Z" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/>
+                  <!-- 骨盆中心三角連接榫 -->
+                  <polygon points="144,265 156,265 153,292 147,292" fill="#0D47A1"/>
+                  
+                  <!-- 左腿 (視覺左側) -->
+                  <g class="left-leg">
+                    <rect x="98" y="292" width="46" height="85" rx="4" fill="url(#legsClassicGrad)" stroke="#0D47A1" stroke-width="2"/>
+                    <!-- 腳掌踏板與凹槽 -->
+                    <path d="M94 372 L144 372 L144 395 L94 395 Z" fill="#0D47A1"/>
+                    <!-- 腳底積木孔洞視覺結構 -->
+                    <circle cx="119" cy="384" r="5" fill="#0A306C"/>
+                  </g>
+
+                  <!-- 右腿 (視覺右側) -->
+                  <g class="right-leg">
+                    <rect x="156" y="292" width="46" height="85" rx="4" fill="url(#legsClassicGrad)" stroke="#0D47A1" stroke-width="2"/>
+                    <!-- 腳掌踏板與凹槽 -->
+                    <path d="M156 372 L206 372 L206 395 L156 395 Z" fill="#0D47A1"/>
+                    <!-- 腳底積木孔洞視覺結構 -->
+                    <circle cx="181" cy="384" r="5" fill="#0A306C"/>
+                  </g>
+                </g>
+
+                <!-- 身體驅幹 (Torso & Arms) -->
+                <g id="partTorso" class="minifigure-part torso-group">
+                  <!-- 身體主梯形 -->
+                  <path d="M110 148 L190 148 L204 265 L96 265 Z" fill="url(#torsoClassicGrad)" stroke="#B71C1C" stroke-width="2.5" filter="url(#legoShadow)"/>
+                  
+                  <!-- 胸前幸運徽章圖騰 (四葉草與積木幾何印花) -->
+                  <g class="torso-print" id="torsoPrint">
+                    <circle cx="150" cy="205" r="22" fill="#FFFFFF" fill-opacity="0.2"/>
+                    <!-- 四葉草幸運印記 -->
+                    <circle cx="143" cy="198" r="9" fill="#FFD500"/>
+                    <circle cx="157" cy="198" r="9" fill="#FFD500"/>
+                    <circle cx="143" cy="212" r="9" fill="#FFD500"/>
+                    <circle cx="157" cy="212" r="9" fill="#FFD500"/>
+                    <path d="M150 205 Q152 225 158 228" stroke="#FFD500" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <circle cx="150" cy="205" r="4" fill="#FFFFFF"/>
+                  </g>
+
+                  <!-- 左手臂 -->
+                  <g class="arm-left">
+                    <path d="M110 152 Q72 178 78 224" stroke="url(#torsoClassicGrad)" stroke-width="26" stroke-linecap="round" fill="none"/>
+                    <!-- 左手腕與 C型手爪 -->
+                    <circle cx="82" cy="242" r="7" fill="url(#yellowGloss)"/>
+                    <path d="M72 238 C60 244, 60 264, 76 268 C88 271, 95 258, 92 248" fill="none" stroke="url(#yellowGloss)" stroke-width="9" stroke-linecap="round"/>
+                  </g>
+
+                  <!-- 右手臂 (舉起拿著幸運金磚/幸運四葉草) -->
+                  <g class="arm-right">
+                    <path d="M190 152 Q228 178 222 224" stroke="url(#torsoClassicGrad)" stroke-width="26" stroke-linecap="round" fill="none"/>
+                    <!-- 右手腕與 C型手爪 -->
+                    <circle cx="218" cy="242" r="7" fill="url(#yellowGloss)"/>
+                    <path d="M228 238 C240 244, 240 264, 224 268 C212 271, 205 258, 208 248" fill="none" stroke="url(#yellowGloss)" stroke-width="9" stroke-linecap="round"/>
+                    
+                    <!-- 幸運物件：金色幸運 2x2 積木 (Lucky Gold Brick) -->
+                    <g id="luckyCharmItem" class="lucky-item-hand" transform="translate(216, 252)">
+                      <rect x="-12" y="-12" width="24" height="20" rx="3" fill="url(#goldLuckyGrad)" stroke="#B78103" stroke-width="1.5" filter="url(#luckyGlowFilter)"/>
+                      <circle cx="-5" cy="-14" r="3.5" fill="#FFE082" stroke="#B78103" stroke-width="1"/>
+                      <circle cx="5" cy="-14" r="3.5" fill="#FFE082" stroke="#B78103" stroke-width="1"/>
+                    </g>
+                  </g>
+
+                  <!-- 領口細節 -->
+                  <path d="M136 148 Q150 162 164 148 Z" fill="#FFE082" opacity="0.8"/>
+                </g>
+
+                <!-- 頭部與表情 (Head & Face) -->
+                <g id="partHead" class="minifigure-part head-group">
+                  <!-- 脖子基座圓柱 -->
+                  <rect x="138" y="138" width="24" height="12" fill="#E65100" rx="2"/>
+                  <!-- 頭頂凸粒 (Stud on Head) -->
+                  <rect x="134" y="66" width="32" height="15" rx="3" fill="url(#yellowGloss)" stroke="#E65100" stroke-width="1.5"/>
+                  <ellipse cx="150" cy="66" rx="16" ry="4" fill="#FFF59D"/>
+
+                  <!-- 經典圓柱頭部 -->
+                  <rect x="116" y="80" width="68" height="60" rx="14" fill="url(#yellowGloss)" stroke="#E65100" stroke-width="2" filter="url(#legoShadow)"/>
+                  
+                  <!-- 臉部表情：經典黑色圓眼睛與純真微笑 -->
+                  <g id="faceExpression" class="face-expression">
+                    <!-- 左眼與反光白點 -->
+                    <circle cx="134" cy="106" r="4.2" fill="#1A1A1A"/>
+                    <circle cx="135.5" cy="104.5" r="1.5" fill="#FFFFFF"/>
+
+                    <!-- 右眼與反光白點 -->
+                    <circle cx="166" cy="106" r="4.2" fill="#1A1A1A"/>
+                    <circle cx="167.5" cy="104.5" r="1.5" fill="#FFFFFF"/>
+
+                    <!-- 經典溫暖弧度微笑 -->
+                    <path d="M136 120 Q150 132 164 120" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M134 118 L137 122" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M166 118 L163 122" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+                  </g>
+
+                  <!-- 帽子 / 頭盔 / 飾品層 -->
+                  <g id="headAccessory" class="head-accessory">
+                    <!-- 經典紅色棒球帽/安全帽造型 (預設經典帽) -->
+                    <path d="M112 84 Q150 56 188 84 Q188 74 150 68 Q112 74 112 84 Z" fill="#D32F2F"/>
+                    <path d="M110 84 Q150 78 190 84 L198 90 Q150 82 102 90 Z" fill="#B71C1C"/>
+                  </g>
+                </g>
+
+                <!-- 浮動幸運光星 (動態裝飾) -->
+                <g class="sparkles-group">
+                  <polygon points="70,120 73,128 81,131 73,134 70,142 67,134 59,131 67,128" fill="#FFD500" class="sparkle s1"/>
+                  <polygon points="230,110 232,116 238,118 232,120 230,126 228,120 222,118 228,116" fill="#FFF59D" class="sparkle s2"/>
+                  <polygon points="245,260 248,266 254,268 248,270 245,276 242,270 236,268 242,266" fill="#FFD500" class="sparkle s3"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 控制小按鈕 -->
+            <div class="stage-controls">
+              <button id="explodeBtn" class="pill-btn" title="解構人偶模組">
+                <span class="btn-icon">🧩</span> 零件拆解透視
+              </button>
+              <button id="tapLuckyBtn" class="pill-btn primary" title="觸碰獲取好運">
+                <span class="btn-icon">✨</span> 點擊注入好運
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 故事驅動：由來與誕生由來 SECTION -->
+    <section id="story" class="content-section">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="sub-heading">ORIGIN & HERITAGE</span>
+          <h2 class="main-heading">從一顆小黃頭開始的傳奇</h2>
+          <div class="heading-line"></div>
+        </div>
+
+        <div class="story-grid">
+          <!-- 故事卡片 1 -->
+          <div class="story-card interactive-card">
+            <div class="card-glow"></div>
+            <div class="story-year">1978</div>
+            <div class="story-icon">📐</div>
+            <h3 class="story-title">設計大師 Jens Knudsen 的初心</h3>
+            <p class="story-text">
+              在 1978 年之前，樂高積木世界裡沒有真正靈活的居民。設計師 <strong>Jens Nygaard Knudsen</strong> 經歷無數次原型試驗，決定打破傳統，創造出一個腰部、手臂、腿部皆可旋轉活動，且手部能緊扣所有樂高配件的小人偶。
+            </p>
+            <div class="card-footer-tag">模組化設計革命</div>
+          </div>
+
+          <!-- 故事卡片 2 -->
+          <div class="story-card interactive-card">
+            <div class="card-glow"></div>
+            <div class="story-year">WHY YELLOW?</div>
+            <div class="story-icon">🎨</div>
+            <h3 class="story-title">不設限的中性黃：每個人都是主角</h3>
+            <p class="story-text">
+              樂高團隊選擇了純粹明亮的經典黃色，且僅用兩顆黑點與一抹微彎嘴角作為表情。這種「中性與包容」的設計，不代表任何特定種族或偏見，讓世界各地的每位玩家，都能把自己的靈魂與夢想投射進人偶中。
+            </p>
+            <div class="card-footer-tag">平等與無窮投射</div>
+          </div>
+
+          <!-- 故事卡片 3 -->
+          <div class="story-card interactive-card">
+            <div class="card-glow"></div>
+            <div class="story-year">3.8 CM</div>
+            <div class="story-icon">✋</div>
+            <h3 class="story-title">握在手心的安全感：幸運的黃金比例</h3>
+            <p class="story-text">
+              高度剛好等於四塊樂高厚磚加上一塊薄板（3.8公分），可以完美放進口袋、立在書桌前，甚至握在手心裡。每當生活中面臨重要考試、簡報或徬徨時刻，輕撫那圓潤的小黃頭，總能帶來踏實而溫暖的定心力。
+            </p>
+            <div class="card-footer-tag">隨身守護者的份量</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 內容核心：四大象徵意涵 SECTION -->
+    <section id="symbolism" class="content-section bg-darker">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="sub-heading">SYMBOLIC MEANING</span>
+          <h2 class="main-heading">為什麼樂高人偶是我的幸運物？</h2>
+          <p class="section-lead">這不只是一件玩具，它是生活哲學的微縮映射，四大象徵帶給我跨越逆境的強大信念。</p>
+          <div class="heading-line"></div>
+        </div>
+
+        <div class="symbol-grid">
+          <!-- 象徵 1: 拼湊韌性 -->
+          <div class="symbol-card interactive-card" data-tilt>
+            <div class="symbol-banner">
+              <span class="symbol-num">01</span>
+              <span class="symbol-emoji">🧩</span>
+            </div>
+            <h3 class="symbol-title">拼湊重組的韌性 (Resilience)</h3>
+            <h4 class="symbol-subtitle">「掉在地上摔散了，重新拼起來就好。」</h4>
+            <p class="symbol-desc">
+              日常難免遭遇挫折與支離破碎的低潮。但樂高人偶最神奇之處在於：它永遠不怕散開。零件掉了可以找回，骨架鬆了可以重裝，甚至能換上更堅固的新裝甲。它象徵著跌倒後永不言棄、隨時重啟的修復力。
+            </p>
+            <ul class="symbol-bullets">
+              <li>面對失敗的從容心態</li>
+              <li>隨時組裝更強大的自己</li>
+            </ul>
+          </div>
+
+          <!-- 象徵 2: 無限想像與角色切換 -->
+          <div class="symbol-card interactive-card" data-tilt>
+            <div class="symbol-banner">
+              <span class="symbol-num">02</span>
+              <span class="symbol-emoji">🚀</span>
+            </div>
+            <h3 class="symbol-title">隨時定義自我的勇氣 (Identity)</h3>
+            <h4 class="symbol-subtitle">「今天想成為誰，就換上什麼裝備。」</h4>
+            <p class="symbol-desc">
+              同一個黃色臉孔，換上太空帽就是宇宙先鋒；換上盔甲就是英勇騎士；穿上工裝就是城市築夢者。它提醒我不要被現實框架所拘束，人生有上萬種身分等待探索，只要心中有熱情，你就是自己故事的主角。
+            </p>
+            <ul class="symbol-bullets">
+              <li>突破既定標籤與限制</li>
+              <li>無限可能的創造與多樣性</li>
+            </ul>
+          </div>
+
+          <!-- 象徵 3: 永恆微笑 -->
+          <div class="symbol-card interactive-card" data-tilt>
+            <div class="symbol-banner">
+              <span class="symbol-num">03</span>
+              <span class="symbol-emoji">😊</span>
+            </div>
+            <h3 class="symbol-title">保持童真的樂觀磁場 (Optimism)</h3>
+            <h4 class="symbol-subtitle">「嘴角上揚微彎，好運自然會拼合。」</h4>
+            <p class="symbol-desc">
+              經典樂高人偶臉上永遠掛著一抹純真、堅定的微笑。每當焦慮煩躁時，看著它毫不動搖的笑容，就像在對自己輕聲打氣：「別慌，一切都能拼出好結果！」以正向心態吸引幸運，是最強大的心靈護身符。
+            </p>
+            <ul class="symbol-bullets">
+              <li>穩定情緒的心靈錨點</li>
+              <li>以微笑吸引良善與幸運</li>
+            </ul>
+          </div>
+
+          <!-- 象徵 4: 踏實基石 -->
+          <div class="symbol-card interactive-card" data-tilt>
+            <div class="symbol-banner">
+              <span class="symbol-num">04</span>
+              <span class="symbol-emoji">🧱</span>
+            </div>
+            <h3 class="symbol-title">一步一腳印的厚度 (Foundations)</h3>
+            <h4 class="symbol-subtitle">「幸運不是偶然，而是一磚一瓦的積累。」</h4>
+            <p class="symbol-desc">
+              人偶雙腳的凹槽，能嚴絲合縫地扣合每一顆樂高積木的圓柱凸粒（Studs）。這象徵著好運並非天外飛來，而是來自平日扎實打底、腳踏實地的每一步積累。底座越穩，能建造的夢想城堡就越壯闊。
+            </p>
+            <ul class="symbol-bullets">
+              <li>每一分專注都是幸運積木</li>
+              <li>堅實站立於自己的舞台</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 趣味互動：每日樂高幸運籤筒 SECTION -->
+    <section id="fortune" class="content-section">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="sub-heading">INTERACTIVE FORTUNE</span>
+          <h2 class="main-heading">抽取你的今日樂高幸運積木</h2>
+          <p class="section-lead">搖一搖積木盒，讓幸運人偶為你抽出今日的守護金句與幸運能量！</p>
+          <div class="heading-line"></div>
+        </div>
+
+        <div class="fortune-box-container">
+          <div class="fortune-display-card" id="fortuneCard">
+            <div class="card-inner">
+              <div class="fortune-icon-wrap" id="fortuneIcon">✨</div>
+              <h3 class="fortune-character-name" id="fortuneTitle">點擊下方積木抽籤</h3>
+              <p class="fortune-quote" id="fortuneQuote">「宇宙浩瀚，但只要踏實拼接，每顆星辰都能抵達。」</p>
+              <div class="fortune-stats" id="fortuneStats">
+                <div class="stat-item">
+                  <span class="stat-name">今日幸運色</span>
+                  <span class="stat-badge" id="luckyColorBadge" style="background: #FFD500; color: #111;">樂高金黃</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-name">推薦幸運配件</span>
+                  <span class="stat-badge" id="luckyItemBadge">經典四葉草積木</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fortune-action-area">
+            <button id="drawFortuneBtn" class="draw-brick-btn">
+              <span class="brick-stud-row">
+                <i></i><i></i><i></i><i></i>
+              </span>
+              <span class="draw-btn-text">🎲 搖一搖積木盒・抽取幸運籤</span>
+            </button>
+            <span class="shake-tip">（支援滑鼠點擊與懸停震動反饋）</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步驟三：Prompt 下達指令專區 (作業指定要求) -->
+    <section id="prompt-section" class="content-section bg-darker prompt-showcase-section">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="sub-heading">ASSIGNMENT SPECIFICATION ・ STEP 3</span>
+          <h2 class="main-heading">步驟三：Prompt 下達指令紀錄</h2>
+          <p class="section-lead">在專案規劃與實作歷程中，下達給 AI 輔助開發的精準 Prompt 與動態腳本工程架構。</p>
+          <div class="heading-line"></div>
+        </div>
+
+        <div class="prompt-terminal">
+          <!-- 模擬終端標題列 -->
+          <div class="terminal-bar">
+            <div class="terminal-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="terminal-title">Prompt_Step3_Interactive_Script.sh</div>
+            <div class="terminal-badge">AI Prompt Command</div>
+          </div>
+
+          <!-- 指令核心展示 -->
+          <div class="terminal-body">
+            <div class="prompt-line-tag"># 作業指定下達之精準 Prompt 指令：</div>
+            <div class="prompt-box">
+              <span class="prompt-cursor">&gt;</span>
+              <code class="prompt-code-text">請幫我規劃並製作這個幸運物網頁的動態互動效果，包含滑鼠懸停與點擊動畫。</code>
+              <button id="copyPromptBtn" class="copy-btn" title="複製此 Prompt">複製指令</button>
+            </div>
+
+            <!-- 動態互動腳本架構與執行說明 -->
+            <div class="prompt-response-overview">
+              <h4 class="overview-title">📋 互動腳本規劃與實作成效清單：</h4>
+              <div class="spec-grid">
+                <div class="spec-item">
+                  <div class="spec-icon">🖱️</div>
+                  <div class="spec-info">
+                    <h5>1. 3D 視差傾斜 (Mouse Tilt)</h5>
+                    <p>監聽滑鼠座標，讓展示台與人偶依游標位置呈現細緻的 3D 傾斜與環境光影連動。</p>
+                  </div>
+                </div>
+
+                <div class="spec-item">
+                  <div class="spec-icon">💥</div>
+                  <div class="spec-info">
+                    <h5>2. 點擊爆破微粒 (Particle Burst)</h5>
+                    <p>點擊人偶時透過 HTML5 Canvas 即時發射金色四角星與圓形積木粒子特效。</p>
+                  </div>
+                </div>
+
+                <div class="spec-item">
+                  <div class="spec-icon">🔊</div>
+                  <div class="spec-info">
+                    <h5>3. Web Audio 原生音效 (Lego Snap Sound)</h5>
+                    <p>使用瀏覽器原生 Web Audio API 合成擬真的樂高積木「喀噠 (Snap)」扣合音效。</p>
+                  </div>
+                </div>
+
+                <div class="spec-item">
+                  <div class="spec-icon">🧩</div>
+                  <div class="spec-info">
+                    <h5>4. 模組化拆解動畫 (Exploded View)</h5>
+                    <p>點擊「零件拆解透視」，頭部、軀幹、雙腿分離飄浮，具體展現樂高模組哲學。</p>
+                  </div>
+                </div>
+
+                <div class="spec-item">
+                  <div class="spec-icon">👕</div>
+                  <div class="spec-info">
+                    <h5>5. 造型外觀動態切換 (Skin Switcher)</h5>
+                    <p>經典守護者、1980 太空人、賽博造夢者、奇幻魔法師一鍵平滑過渡替換色彩與印花。</p>
+                  </div>
+                </div>
+
+                <div class="spec-item">
+                  <div class="spec-icon">🥠</div>
+                  <div class="spec-info">
+                    <h5>6. 每日幸運籤抽籤邏輯 (Fortune Generator)</h5>
+                    <p>配合震動反饋與翻轉卡片動畫，動態產生象徵箴言與每日幸運配色。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- 頁腳 FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="brick-icon"></span>
+          <span class="footer-brand-title">LEGO MINIFIGURE LUCKY CHARM</span>
+        </div>
+        <p class="footer-desc">
+          輔仁大學 大二《多媒體網頁設計》課程作業成果<br>
+          以故事驅動、現代網頁美學與多重互動腳本呈現隨身幸運物的獨特魅力。
+        </p>
+      </div>
+
+      <div class="footer-meta">
+        <div class="student-info-box">
+          <span class="meta-label">專案作者資訊：</span>
+          <span class="meta-value student-badge">學號_名字（請於 Readme.md 與此處填入）</span>
+        </div>
+        <p class="copyright-text">
+          &copy; 2026 多媒體網頁設計課程. Crafted with passion & LEGO spirit.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

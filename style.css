@@ -1,0 +1,1309 @@
+/* ==========================================================================
+   LEGO Minifigure 幸運物網頁設計 - style.css
+   風格：現代暗色系毛玻璃微質感 (Glassmorphic Dark Theme) + 樂高經典亮彩
+   ========================================================================== */
+
+:root {
+  --bg-primary: #090c14;
+  --bg-secondary: #0f1422;
+  --bg-card: rgba(22, 29, 46, 0.65);
+  --bg-card-hover: rgba(30, 41, 66, 0.85);
+  
+  --lego-yellow: #ffd500;
+  --lego-yellow-glow: rgba(255, 213, 0, 0.35);
+  --lego-red: #ef4444;
+  --lego-blue: #2563eb;
+  --lego-green: #10b981;
+  --gold-accent: #f59e0b;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(255, 213, 0, 0.4);
+
+  --font-heading: 'Outfit', 'Noto Sans TC', sans-serif;
+  --font-body: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 基礎重設 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.65;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* 全域環境光暈效果 */
+.ambient-glow {
+  position: fixed;
+  width: 650px;
+  height: 650px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(140px);
+  z-index: 0;
+  opacity: 0.15;
+}
+
+.glow-top-left {
+  top: -150px;
+  left: -150px;
+  background: radial-gradient(circle, var(--lego-yellow) 0%, transparent 70%);
+}
+
+.glow-bottom-right {
+  bottom: -200px;
+  right: -100px;
+  background: radial-gradient(circle, var(--lego-blue) 0%, transparent 70%);
+}
+
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 頂部導覽列 */
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 72px;
+  background: rgba(9, 12, 20, 0.82);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-glass);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+.nav-container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+/* 純 CSS 擬真 2x2 樂高積木圖標 */
+.brick-icon {
+  width: 28px;
+  height: 22px;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border-radius: 3px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+}
+
+.brick-icon::before,
+.brick-icon::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: 8px;
+  height: 4px;
+  background: #ff6b6b;
+  border-radius: 2px 2px 0 0;
+}
+
+.brick-icon::before { left: 4px; }
+.brick-icon::after { right: 4px; }
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--lego-yellow);
+}
+
+.brand-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: color 0.25s ease;
+  position: relative;
+  padding: 6px 0;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text-main);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--lego-yellow);
+  box-shadow: 0 0 8px var(--lego-yellow);
+  border-radius: 2px;
+}
+
+.nav-link.highlight {
+  color: var(--lego-yellow);
+  border: 1px solid rgba(255, 213, 0, 0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(255, 213, 0, 0.05);
+}
+
+.nav-link.highlight:hover {
+  background: rgba(255, 213, 0, 0.15);
+  box-shadow: 0 0 12px rgba(255, 213, 0, 0.3);
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.25s ease;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 主展示區 (HERO SECTION) */
+.hero-section {
+  position: relative;
+  z-index: 2;
+  padding: 60px 24px 100px;
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+}
+
+.hero-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* 左側文案導引 */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 213, 0, 0.1);
+  border: 1px solid rgba(255, 213, 0, 0.3);
+  padding: 6px 14px;
+  border-radius: 30px;
+  width: fit-content;
+  color: var(--lego-yellow);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--lego-yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--lego-yellow);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: 3.4rem;
+  line-height: 1.18;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #ffd500 20%, #ff8a00 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-desc {
+  font-size: 1.08rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+/* 幸運能量卡片 */
+.lucky-gauge-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  padding: 20px 24px;
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gauge-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.gauge-value {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--lego-yellow);
+  text-shadow: 0 0 10px rgba(255, 213, 0, 0.5);
+}
+
+.gauge-bar-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.gauge-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd500, #ff5252, #42a5f5);
+  border-radius: 10px;
+  transition: width 0.4s var(--transition-bounce);
+  box-shadow: 0 0 12px rgba(255, 213, 0, 0.5);
+}
+
+.gauge-hint {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* 造型外觀選擇按鈕 */
+.outfit-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.selector-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.outfit-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.outfit-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  transition: all 0.25s ease;
+}
+
+.outfit-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.outfit-btn.active {
+  background: rgba(255, 213, 0, 0.15);
+  border-color: var(--lego-yellow);
+  color: var(--lego-yellow);
+  box-shadow: 0 0 14px rgba(255, 213, 0, 0.2);
+}
+
+.outfit-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.classic-dot { background: #ef4444; border: 1px solid #ffd500; }
+.space-dot { background: #2563eb; border: 1px solid #ffd500; }
+.cyber-dot { background: #00f0ff; border: 1px solid #a855f7; }
+.wizard-dot { background: #7c3aed; border: 1px solid #10b981; }
+
+/* 右側 3D 互動人偶展示台 */
+.hero-stage-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1200px;
+}
+
+.stage-pedestal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  min-height: 520px;
+  background: radial-gradient(circle at 50% 90%, rgba(255, 213, 0, 0.08) 0%, rgba(20, 27, 45, 0.4) 70%, transparent 100%);
+  border: 1px solid var(--border-glass);
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.stage-pedestal:hover {
+  border-color: rgba(255, 213, 0, 0.3);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 213, 0, 0.15);
+}
+
+.pedestal-glow {
+  position: absolute;
+  bottom: 60px;
+  width: 220px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 213, 0, 0.45) 0%, transparent 70%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.lucky-halo {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 213, 0, 0.2);
+  top: 15%;
+  pointer-events: none;
+  animation: rotateHalo 30s linear infinite;
+}
+
+@keyframes rotateHalo {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 人偶容器與對話泡泡 */
+.minifigure-container {
+  position: relative;
+  width: 260px;
+  height: 380px;
+  cursor: pointer;
+  transition: transform 0.4s var(--transition-bounce);
+  user-select: none;
+}
+
+.minifigure-container:hover {
+  transform: translateY(-8px) scale(1.03);
+}
+
+.minifigure-container:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.minifigure-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.45));
+}
+
+/* 人偶對話泡泡 */
+.speech-bubble {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: #ffffff;
+  color: #111827;
+  padding: 8px 16px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.3s var(--transition-bounce);
+  z-index: 10;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: #ffffff transparent;
+}
+
+.minifigure-container:hover .speech-bubble,
+.speech-bubble.active {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+/* 人偶零件懸停與動畫 */
+.minifigure-part {
+  transition: transform 0.5s var(--transition-bounce), filter 0.3s ease;
+}
+
+.head-group {
+  transform-origin: 150px 140px;
+  animation: headBob 4s ease-in-out infinite;
+}
+
+@keyframes headBob {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-1.5deg); }
+  75% { transform: rotate(1.5deg); }
+}
+
+.minifigure-container:hover .head-group {
+  transform: rotate(3deg) translateY(-2px);
+}
+
+.arm-right {
+  transform-origin: 190px 160px;
+  animation: waveArm 3s ease-in-out infinite alternate;
+}
+
+@keyframes waveArm {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-5deg); }
+}
+
+/* 幸運星星閃爍動畫 */
+.sparkle {
+  transform-origin: center;
+  animation: sparkleTwinkle 2s ease-in-out infinite alternate;
+}
+
+.s1 { animation-delay: 0.2s; }
+.s2 { animation-delay: 0.7s; }
+.s3 { animation-delay: 1.3s; }
+
+@keyframes sparkleTwinkle {
+  0% { transform: scale(0.6) rotate(0deg); opacity: 0.4; }
+  100% { transform: scale(1.2) rotate(45deg); opacity: 1; }
+}
+
+/* 零件拆解透視模式 (EXPLODED VIEW) */
+.minifigure-container.is-exploded .head-group {
+  transform: translateY(-55px) scale(0.95);
+  filter: drop-shadow(0 10px 15px rgba(255, 213, 0, 0.4));
+}
+
+.minifigure-container.is-exploded .torso-group {
+  transform: translateY(0);
+}
+
+.minifigure-container.is-exploded .legs-group {
+  transform: translateY(45px);
+  filter: drop-shadow(0 10px 15px rgba(37, 99, 235, 0.4));
+}
+
+.minifigure-container.is-exploded .lucky-item-hand {
+  transform: translate(245px, 252px) rotate(15deg);
+}
+
+/* 展示台底部操作小膠囊 */
+.stage-controls {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  z-index: 5;
+}
+
+.pill-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+}
+
+.pill-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.pill-btn.primary {
+  background: linear-gradient(135deg, #ffd500, #ff9500);
+  border-color: #ffd500;
+  color: #111;
+  box-shadow: 0 4px 15px rgba(255, 213, 0, 0.35);
+}
+
+.pill-btn.primary:hover {
+  box-shadow: 0 6px 20px rgba(255, 213, 0, 0.55);
+}
+
+/* 通用內容區塊 (SECTIONS) */
+.content-section {
+  position: relative;
+  z-index: 2;
+  padding: 100px 24px;
+}
+
+.content-section.bg-darker {
+  background: var(--bg-secondary);
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.sub-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--lego-yellow);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.main-heading {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.section-lead {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 680px;
+  margin: 12px auto 0;
+}
+
+.heading-line {
+  width: 50px;
+  height: 3px;
+  background: var(--lego-yellow);
+  border-radius: 3px;
+  margin: 18px auto 0;
+}
+
+/* 故事卡片網格 (STORY GRID) */
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.interactive-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 24px;
+  padding: 36px 30px;
+  backdrop-filter: blur(12px);
+  transition: all 0.35s var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.interactive-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 213, 0, 0.1);
+}
+
+.card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--lego-yellow), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.interactive-card:hover .card-glow {
+  opacity: 1;
+}
+
+.story-year {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--lego-yellow);
+  margin-bottom: 8px;
+}
+
+.story-icon {
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+}
+
+.story-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  line-height: 1.35;
+}
+
+.story-text {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  flex-grow: 1;
+}
+
+.card-footer-tag {
+  margin-top: 24px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--lego-yellow);
+  background: rgba(255, 213, 0, 0.08);
+  border: 1px solid rgba(255, 213, 0, 0.2);
+  padding: 5px 12px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+/* 四大象徵意涵 (SYMBOLISM GRID) */
+.symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.symbol-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 24px;
+  padding: 36px 32px;
+  backdrop-filter: blur(12px);
+  transition: all 0.35s var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+}
+
+.symbol-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.symbol-num {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.symbol-emoji {
+  font-size: 2.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-glass);
+}
+
+.symbol-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.symbol-subtitle {
+  font-size: 0.95rem;
+  color: var(--lego-yellow);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.symbol-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.symbol-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border-glass);
+  padding-top: 18px;
+}
+
+.symbol-bullets li {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.symbol-bullets li::before {
+  content: '✔';
+  color: var(--lego-yellow);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* 每日樂高幸運籤筒 (FORTUNE GENERATOR) */
+.fortune-box-container {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
+
+.fortune-display-card {
+  width: 100%;
+  background: linear-gradient(145deg, rgba(30, 41, 66, 0.8), rgba(15, 20, 34, 0.9));
+  border: 2px solid var(--border-glow);
+  border-radius: 28px;
+  padding: 45px 36px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 213, 0, 0.05);
+  backdrop-filter: blur(16px);
+  position: relative;
+  transition: transform 0.4s var(--transition-bounce), box-shadow 0.4s ease;
+}
+
+.fortune-display-card.shake {
+  animation: shakeBrick 0.5s ease-in-out;
+}
+
+@keyframes shakeBrick {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  20% { transform: rotate(-4deg) scale(1.02); }
+  40% { transform: rotate(4deg) scale(1.02); }
+  60% { transform: rotate(-2deg) scale(1.01); }
+  80% { transform: rotate(2deg) scale(1.01); }
+}
+
+.fortune-icon-wrap {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: bounceSlow 3s infinite ease-in-out;
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.fortune-character-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--lego-yellow);
+  margin-bottom: 12px;
+}
+
+.fortune-quote {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  color: var(--text-main);
+  font-style: italic;
+  margin-bottom: 30px;
+}
+
+.fortune-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  border-top: 1px dashed var(--border-glass);
+  padding-top: 24px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.stat-name {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.stat-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass);
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.fortune-action-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 擬真 3D 樂高抽籤按鈕 */
+.draw-brick-btn {
+  background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+  border: none;
+  padding: 16px 36px 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 0 #7f1d1d, 0 16px 30px rgba(239, 68, 68, 0.4);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.draw-brick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 0 #7f1d1d, 0 20px 35px rgba(239, 68, 68, 0.5);
+}
+
+.draw-brick-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 #7f1d1d, 0 6px 15px rgba(239, 68, 68, 0.4);
+}
+
+.brick-stud-row {
+  display: flex;
+  gap: 12px;
+}
+
+.brick-stud-row i {
+  width: 12px;
+  height: 6px;
+  background: #ff7878;
+  border-radius: 3px 3px 0 0;
+  display: inline-block;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.draw-btn-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.shake-tip {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* 步驟三：Prompt 指令展示專區 (PROMPT SHOWCASE) */
+.prompt-terminal {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 213, 0, 0.08);
+}
+
+.terminal-bar {
+  background: #161b22;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.terminal-title {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.terminal-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(255, 213, 0, 0.15);
+  color: var(--lego-yellow);
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.terminal-body {
+  padding: 30px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.prompt-line-tag {
+  font-family: monospace;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.prompt-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 213, 0, 0.3);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.prompt-cursor {
+  color: var(--lego-yellow);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.prompt-code-text {
+  font-family: monospace;
+  font-size: 1.05rem;
+  color: #fff;
+  flex-grow: 1;
+  letter-spacing: 0.5px;
+  word-break: break-all;
+}
+
+.copy-btn {
+  background: rgba(255, 213, 0, 0.15);
+  border: 1px solid var(--lego-yellow);
+  color: var(--lego-yellow);
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.copy-btn:hover {
+  background: var(--lego-yellow);
+  color: #111;
+}
+
+.overview-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.spec-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: border-color 0.25s ease;
+}
+
+.spec-item:hover {
+  border-color: rgba(255, 213, 0, 0.3);
+}
+
+.spec-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.spec-info h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--lego-yellow);
+  margin-bottom: 4px;
+}
+
+.spec-info p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* 頁腳 FOOTER */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid var(--border-glass);
+  background: #06080e;
+  padding: 50px 24px 40px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.footer-brand {
+  max-width: 500px;
+}
+
+.footer-brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 1px;
+}
+
+.footer-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+.footer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.student-info-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 213, 0, 0.4);
+  padding: 10px 18px;
+  border-radius: 12px;
+}
+
+.meta-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.student-badge {
+  font-weight: 700;
+  color: var(--lego-yellow);
+  font-size: 0.95rem;
+}
+
+.copyright-text {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+/* 響應式 RWD 適配 */
+@media (max-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .hero-content {
+    align-items: center;
+  }
+
+  .outfit-selector {
+    align-items: center;
+  }
+
+  .outfit-buttons {
+    justify-content: center;
+  }
+
+  .story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .symbol-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spec-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-meta {
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .main-heading {
+    font-size: 2rem;
+  }
+
+  .prompt-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .copy-btn {
+    align-self: flex-end;
+  }
+}
